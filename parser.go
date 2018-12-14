@@ -276,7 +276,14 @@ func (p *tomlParser) parseRvalue() interface{} {
 				}
 				val, err = strconv.ParseInt(cleanedVal[2:], 2, 64)
 			default:
-				panic("invalid base") // the lexer should catch this first
+				err = numberContainsInvalidUnderscore(tok.val)
+				if err != nil {
+					p.raiseError(tok, "%s", err)
+				}
+				val, err = strconv.ParseInt(cleanedVal, 10, 64)
+				if err != nil {
+					panic("Invaild Base")
+				}
 			}
 		} else {
 			err = numberContainsInvalidUnderscore(tok.val)
